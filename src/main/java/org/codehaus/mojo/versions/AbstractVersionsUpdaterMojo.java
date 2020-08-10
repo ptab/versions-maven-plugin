@@ -417,7 +417,7 @@ public abstract class AbstractVersionsUpdaterMojo
      * @return <code>true</code> if the update should be applied.
      * @since 1.0-alpha-1
      */
-    protected boolean shouldApplyUpdate( Artifact artifact, String currentVersion, ArtifactVersion updateVersion )
+    protected boolean shouldApplyUpdate( Artifact artifact, String currentVersion, ArtifactVersion updateVersion, boolean allowDowngrade )
     {
         getLog().debug( "Proposal is to update from " + currentVersion + " to " + updateVersion );
 
@@ -448,6 +448,15 @@ public abstract class AbstractVersionsUpdaterMojo
             getLog().info( "Current version of " + artifact.toString() + " is the latest." );
             return false;
         }
+
+        ArtifactVersion currentArtifactVersion = helper.createArtifactVersion( currentVersion );
+        boolean willDowngrade = updateVersion.compareTo( currentArtifactVersion ) < 0;
+        if ( willDowngrade && !allowDowngrade )
+        {
+            getLog().info("Not updating version: current version of " + artifact.toString() + " is higher than the latest found." );
+            return false;
+        }
+
         return true;
     }
 
