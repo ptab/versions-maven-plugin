@@ -449,11 +449,10 @@ public abstract class AbstractVersionsUpdaterMojo
             return false;
         }
 
-        ArtifactVersion currentArtifactVersion = helper.createArtifactVersion( currentVersion );
-        boolean willDowngrade = updateVersion.compareTo( currentArtifactVersion ) < 0;
+        boolean willDowngrade = helper.createArtifactVersion( currentVersion ).compareTo( updateVersion ) > 0;
         if ( willDowngrade && !allowDowngrade )
         {
-            getLog().info("Not updating version: current version of " + artifact.toString() + " is higher than the latest found." );
+            getLog().info("Not updating " + artifact.getGroupId() + ":" + artifact.getArtifactId() + " from " + currentVersion + " to " + updateVersion.toString() + " because downgrades are not allowed." );
             return false;
         }
 
